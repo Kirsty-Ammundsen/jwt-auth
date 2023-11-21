@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Response } from 'express'
 import { Fruit, FruitSnakeCase } from '../../models/fruit.ts'
 import checkJwt, { JwtRequest } from '../auth0.ts'
 
@@ -137,9 +137,9 @@ router.delete('/:id', checkJwt, async (req: JwtRequest, res) => {
   }
 })
 
-function handleError(err: Error | unknown, res) {
+function handleError(err: unknown, res: Response) {
   console.error(err)
-  if (err.message === 'Unauthorized') {
+  if ((err as Error).message === 'Unauthorized') {
     res
       .status(403)
       .send('Unauthorized: Only the user who added the fruit may update it')

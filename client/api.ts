@@ -80,15 +80,18 @@ export async function deleteFruit(id: number, token: string): Promise<Fruit[]> {
   }
 }
 
-function logError(err: Error | unknown) {
-  if (err.message === 'Username Taken') {
+function logError(err: unknown) {
+  if ((err as Error).message === 'Username Taken') {
     throw new Error('Username already taken - please choose another')
-  } else if (err.message === 'Forbidden') {
+  } else if ((err as Error).message === 'Forbidden') {
     throw new Error(
       'Only the user who added the fruit may update and delete it'
     )
   } else {
-    console.error('Error consuming the API (in client/api.js):', err.message)
+    console.error(
+      'Error consuming the API (in client/api.js):',
+      (err as Error).message
+    )
     throw err
   }
 }

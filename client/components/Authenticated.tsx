@@ -14,10 +14,12 @@ interface Props {
 
 export function IfAuthenticated(props: Props) {
   const { children } = props
-  return useIsAuthenticated() ? <>{children}</> : null
+  if (useIsAuthenticated()) return <>{children}</>
+  else return null
 }
 
 export function IfNotAuthenticated(props: Props) {
   const { children } = props
-  return !useIsAuthenticated() ? <>{children}</> : null
+  if (!useIsAuthenticated()) return <>{children}</>
+  else return null
 }

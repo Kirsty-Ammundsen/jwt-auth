@@ -22,7 +22,8 @@ const checkJwt = jwt({
 
 export default checkJwt
 
-export interface JwtRequest<TReq, TRes>
+// any throws lint error - but needs to be here
+export interface JwtRequest<TReq = any, TRes = any>
   extends Request<ParamsDictionary, TRes, TReq> {
   auth?: JwtPayload
 }
