@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 
 // TODO: use checkJwt as middleware
 // POST /api/v1/fruits
-router.post('/', checkJwt, (req: JwtRequest, res) => {
+router.post('/', checkJwt, async (req: JwtRequest, res) => {
   const { fruit } = req.body
   const auth0Id = req.auth?.sub
 
@@ -40,18 +40,27 @@ router.post('/', checkJwt, (req: JwtRequest, res) => {
     average_grams_each: fruit.averageGramsEach,
   }
 
-  addFruit(newFruit)
-    .then(() => getFruits())
-    .then((fruits: Fruit[]) => res.json({ fruits }))
-    .catch((err: Error) => {
-      console.error(err)
-      res.status(500).send('Something went wrong')
-    })
+  // addFruit(newFruit)
+  //   .then(() => getFruits())
+  //   .then((fruits: Fruit[]) => res.json({ fruits }))
+  //   .catch((err: Error) => {
+  //     console.error(err)
+  //     res.status(500).send('Something went wrong')
+  //   })
+
+  try {
+    await addFruit(newFruit)
+      .then(() => getFruits())
+      .then((fruits: Fruit[]) => res.json({ fruits }))
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('Something went wrong')
+  }
 })
 
 // TODO: use checkJwt as middleware
 // PUT /api/v1/fruits
-router.put('/', checkJwt, (req: JwtRequest, res) => {
+router.put('/', checkJwt, async (req: JwtRequest, res) => {
   console.log(typeof req)
   const { fruit } = req.body
   const auth0Id = req.auth?.sub
@@ -67,25 +76,34 @@ router.put('/', checkJwt, (req: JwtRequest, res) => {
     return res.status(401).send('Unauthorized')
   }
 
-  userCanEdit(fruit.id, auth0Id)
-    .then(() => updateFruit(fruitToUpdate as FruitSnakeCase))
-    .then(() => getFruits())
-    .then((fruits: Fruit[]) => res.json({ fruits }))
-    .catch((err: Error) => {
-      console.error(err)
-      if (err.message === 'Unauthorized') {
-        res
-          .status(403)
-          .send('Unauthorized: Only the user who added the fruit may update it')
-      } else {
-        res.status(500).send('Something went wrong')
-      }
-    })
+  // userCanEdit(fruit.id, auth0Id)
+  //   .then(() => updateFruit(fruitToUpdate as FruitSnakeCase))
+  //   .then(() => getFruits())
+  //   .then((fruits: Fruit[]) => res.json({ fruits }))
+  //   .catch((err: Error) => {
+  //     console.error(err)
+  //     if (err.message === 'Unauthorized') {
+  //       res
+  //         .status(403)
+  //         .send('Unauthorized: Only the user who added the fruit may update it')
+  //     } else {
+  //       res.status(500).send('Something went wrong')
+  //     }
+  //   })
+
+  try {
+    await userCanEdit(fruit.id, auth0Id)
+      .then(() => updateFruit(fruitToUpdate as FruitSnakeCase))
+      .then(() => getFruits())
+      .then((fruits: Fruit[]) => res.json({ fruits }))
+  } catch (error) {
+    handleError(error, res)
+  }
 })
 
 // TODO: use checkJwt as middleware
 // DELETE /api/v1/fruits
-router.delete('/:id', checkJwt, (req: JwtRequest, res) => {
+router.delete('/:id', checkJwt, async (req: JwtRequest, res) => {
   const id = Number(req.params.id)
   const auth0Id = req.auth?.sub
 
@@ -94,20 +112,40 @@ router.delete('/:id', checkJwt, (req: JwtRequest, res) => {
     return res.status(401).send('Unauthorized')
   }
 
-  userCanEdit(id, auth0Id)
-    .then(() => deleteFruit(id))
-    .then(() => getFruits())
-    .then((fruits: Fruit[]) => res.json({ fruits }))
-    .catch((err: Error) => {
-      console.error(err)
-      if (err.message === 'Unauthorized') {
-        res
-          .status(403)
-          .send('Unauthorized: Only the user who added the fruit may update it')
-      } else {
-        res.status(500).send('Something went wrong')
-      }
-    })
+  // userCanEdit(id, auth0Id)
+  //   .then(() => deleteFruit(id))
+  //   .then(() => getFruits())
+  //   .then((fruits: Fruit[]) => res.json({ fruits }))
+  //   .catch((err: Error) => {
+  //     console.error(err)
+  //     if (err.message === 'Unauthorized') {
+  //       res
+  //         .status(403)
+  //         .send('Unauthorized: Only the user who added the fruit may update it')
+  //     } else {
+  //       res.status(500).send('Something went wrong')
+  //     }
+  //   })
+
+  try {
+    await userCanEdit(id, auth0Id)
+      .then(() => deleteFruit(id))
+      .then(() => getFruits())
+      .then((fruits: Fruit[]) => res.json({ fruits }))
+  } catch (error) {
+    handleError(error, res)
+  }
 })
+
+function handleError(err: Error | unknown, res) {
+  console.error(err)
+  if (err.message === 'Unauthorized') {
+    res
+      .status(403)
+      .send('Unauthorized: Only the user who added the fruit may update it')
+  } else {
+    res.status(500).send('Something went wrong')
+  }
+}
 
 export default router
