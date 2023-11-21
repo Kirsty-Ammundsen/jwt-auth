@@ -3,40 +3,84 @@ import { Fruit, NewFruit } from '../models/fruit.ts'
 
 const rootUrl = '/api/v1'
 
-export function getFruits(): Promise<Fruit[]> {
-  return request
-    .get(`${rootUrl}/fruits`)
-    .then((res) => res.body.fruits)
-    .catch(logError)
+export async function getFruits(): Promise<Fruit[]> {
+  //  request
+  //     .get(`${rootUrl}/fruits`)
+  //     .then((res) => res.body.fruits)
+  //     .catch(logError)
+  try {
+    const result = await request.get(`${rootUrl}/fruits`)
+    return result.body.fruits
+  } catch (error) {
+    console.error(error)
+    throw logError(error)
+  }
 }
 
-export function addFruit(fruit: NewFruit, token: string): Promise<Fruit[]> {
-  return request
-    .post(`${rootUrl}/fruits`)
-    .set('Authorization', `Bearer ${token}`)
-    .send({ fruit })
-    .then((res) => res.body.fruits)
-    .catch(logError)
+export async function addFruit(
+  fruit: NewFruit,
+  token: string
+): Promise<Fruit[]> {
+  // return request
+  //   .post(`${rootUrl}/fruits`)
+  //   .set('Authorization', `Bearer ${token}`)
+  //   .send({ fruit })
+  //   .then((res) => res.body.fruits)
+  //   .catch(logError)
+
+  try {
+    const result = await request
+      .post(`${rootUrl}/fruits`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ fruit })
+    return result.body.fruits
+  } catch (error) {
+    console.error(error)
+    throw logError(error)
+  }
 }
 
-export function updateFruit(fruit: Fruit, token: string): Promise<Fruit[]> {
-  return request
-    .put(`${rootUrl}/fruits`)
-    .set('Authorization', `Bearer ${token}`)
-    .send({ fruit })
-    .then((res) => res.body.fruits)
-    .catch(logError)
+export async function updateFruit(
+  fruit: Fruit,
+  token: string
+): Promise<Fruit[]> {
+  // return request
+  //   .put(`${rootUrl}/fruits`)
+  //   .set('Authorization', `Bearer ${token}`)
+  //   .send({ fruit })
+  //   .then((res) => res.body.fruits)
+  //   .catch(logError)
+
+  try {
+    const result = await request
+      .put(`${rootUrl}/fruits`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ fruit })
+    return result.body.fruits
+  } catch (error) {
+    console.error(error)
+    throw logError(error)
+  }
 }
 
-export function deleteFruit(id: number, token: string): Promise<Fruit[]> {
-  return request
-    .delete(`${rootUrl}/fruits/${id}`)
-    .set('Authorization', `Bearer ${token}`)
-    .then((res) => res.body.fruits)
-    .catch(logError)
+export async function deleteFruit(id: number, token: string): Promise<Fruit[]> {
+  // return request
+  //   .delete(`${rootUrl}/fruits/${id}`)
+  //   .set('Authorization', `Bearer ${token}`)
+  //   .then((res) => res.body.fruits)
+  //   .catch(logError)
+
+  try {
+    const result = await request
+      .delete(`${rootUrl}/fruits/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+    return result.body.fruits
+  } catch (error) {
+    throw logError(error)
+  }
 }
 
-function logError(err: Error) {
+function logError(err: Error | unknown) {
   if (err.message === 'Username Taken') {
     throw new Error('Username already taken - please choose another')
   } else if (err.message === 'Forbidden') {

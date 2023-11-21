@@ -14,13 +14,13 @@ const router = express.Router()
 
 // A public endpoint that anyone can access
 // GET /api/v1/fruits
-router.get('/', (req, res) => {
-  getFruits()
-    .then((fruits: Fruit[]) => res.json({ fruits }))
-    .catch((err: Error) => {
-      console.error(err)
-      res.status(500).send('Something went wrong')
-    })
+router.get('/', async (req, res) => {
+  try {
+    await getFruits().then((fruits: Fruit[]) => res.json({ fruits }))
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('Something went wrong')
+  }
 })
 
 // TODO: use checkJwt as middleware
