@@ -31,21 +31,21 @@ function Fruits() {
   // TODO: call the useAuth0 hook and destructure getAccessTokenSilently
 
   useEffect(() => {
-    getFruits()
-      .then(setFruits)
-      .catch((err) => setError(err.message))
-    // async function getData() {
-    //   try {
-    //     // TODO: pass token as second parameter
-    //     const fruits = await getFruits()
-    //     setFruits(fruits)
-    //   } catch (err: unknown) {
-    //     if (err instanceof Error) {
-    //       setError(err.message)
-    //     }
-    //   }
-    // }
-    // getData()
+    // getFruits()
+    //   .then(setFruits)
+    //   .catch((err) => setError(err.message))
+    async function getData() {
+      try {
+        // TODO: pass token as second parameter
+        const fruits = await getFruits()
+        setFruits(fruits)
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message)
+        }
+      }
+    }
+    getData()
   }, [])
 
   const { getAccessTokenSilently } = useAuth0()
